@@ -1,0 +1,54 @@
+import {useState, useEffect} from "react";
+
+
+
+const Details= ()=> {
+    const [tasks,setTasks]= useState([]);
+
+    useEffect(()=> {
+      const storedTasks= JSON.parse(localStorage.getItem("tasks")) ||[];
+      setTasks(storedTasks);
+    },[]);
+    
+    const handleDelete= (id)=> {
+        const updateTasks= tasks.filter((task) => task.id !== id);
+        localStorage.setItem("tasks",JSON.stringify(updateTasks));
+        setTasks(updateTasks);
+
+    };
+
+    const handleStatusChange=  (id,status)=> {
+        const updatedTasks= tasks.map((task)=> 
+            task.id === id ? {...task,status}: task
+        );
+        setTasks(updatedTasks);
+        localStorage.setItem("tasks",JSON.stringify(updatedTasks));
+
+    };
+    return(
+        <div>
+            <p>Task List</p>
+            <div>
+                <ul>{tasks.map((task)=>
+                <li key={task.id}>
+                    <div>
+                        <p>{task.title}</p>
+                        <p>{task.description}</p>
+                    </div>
+                    <div>
+                        <select value={task.status}
+                        onChange={(e)=> handleStatusChange(task.id,e.target.value)}
+                           >
+                            <option value="pending">Pending</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                        <button onClick={()=> handleDelete(task.id)}>Delete</button>
+                    </div>
+                </li>)}
+                </ul>
+            </div>
+        </div>
+    );
+};
+
+export default Details;
